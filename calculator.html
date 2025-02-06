@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Hitler Policy Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .counter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .total-counter {
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            gap: 10px;
+        }
+        .btn {
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            color: white;
+            border-radius: 5px;
+        }
+        .btn-blue {
+            background-color: #007BFF;
+        }
+        .btn-red {
+            background-color: #DC3545;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Secret Hitler Policy Calculator</h2>
+        <div class="total-counter">
+            <span>Total Policies:</span>
+            <span id="total">17</span>
+        </div>
+        <div class="counter">
+            <span>Liberal Policies:</span>
+            <button class="btn btn-blue" onclick="changePolicy('liberal', -1)">-</button>
+            <span id="liberal">6</span>
+            <button class="btn btn-blue" onclick="changePolicy('liberal', 1)">+</button>
+        </div>
+        <div class="counter">
+            <span>Fascist Policies:</span>
+            <button class="btn btn-red" onclick="changePolicy('fascist', -1)">-</button>
+            <span id="fascist">11</span>
+            <button class="btn btn-red" onclick="changePolicy('fascist', 1)">+</button>
+        </div>
+        <div class="results" id="results">
+            <h3>Probabilities for drawing 3 policies:</h3>
+            <p id="reshuffle-message" style="display: none; color: red;">Less than 3 policies - reshuffle the policies deck</p>
+            <p>0 Liberal: <span id="prob-0">0.00%</span></p>
+            <p>1 Liberal: <span id="prob-1">0.00%</span></p>
+            <p>2 Liberal: <span id="prob-2">0.00%</span></p>
+            <p>3 Liberal: <span id="prob-3">0.00%</span></p>
+        </div>
+    </div>
+
+    <script>
+        function factorial(n) {
+            return n <= 1 ? 1 : n * factorial(n - 1);
+        }
+        function combination(n, r) {
+            return factorial(n) / (factorial(r) * factorial(n - r));
+        }
+        function probability(liberal, fascist) {
+            let total = liberal + fascist;
+            let results = {};
+            for (let x = 0; x <= 3; x++) {
+                if (x <= liberal && (3 - x) <= fascist) {
+                    let ways = combination(liberal, x) * combination(fascist, 3 - x);
+                    let totalWays = combination(total, 3);
+                    results[x] = (ways / totalWays * 100).toFixed(2) + "%";
+                } else {
+                    results[x] = "0.00%";
+                }
+            }
+            return results;
+        }
+        function updateProbabilities() {
+            let liberal = parseInt(document.getElementById("liberal").innerText);
+            let fascist = parseInt(document.getElementById("fascist").innerText);
+            let total = liberal + fascist;
+            let resultsDiv = document.getElementById("results");
+            let reshuffleMessage = document.getElementById("reshuffle-message");
+            if (total < 3) {
+                reshuffleMessage.style.display = "block";
+                resultsDiv.querySelectorAll("p:not(#reshuffle-message)").forEach(p => p.style.display = "none");
+            } else {
+                reshuffleMessage.style.display = "none";
+                resultsDiv.querySelectorAll("p:not(#reshuffle-message)").forEach(p => p.style.display = "block");
+                let probs = probability(liberal, fascist);
+                for (let i = 0; i <= 3; i++) {
+                    document.getElementById("prob-" + i).innerText = probs[i];
+                }
+            }
+        }
+        function changePolicy(type, change) {
+            let liberal = parseInt(document.getElementById("liberal").innerText);
+            let fascist = parseInt(document.getElementById("fascist").innerText);
+            if (type === 'liberal' && liberal + change >= 0 && liberal + change <= 6) {
+                document.getElementById("liberal").innerText = liberal + change;
+            } else if (type === 'fascist' && fascist + change >= 0 && fascist + change <= 11) {
+                document.getElementById("fascist").innerText = fascist + change;
+            }
+            document.getElementById("total").innerText = liberal + fascist;
+            updateProbabilities();
+        }
+        updateProbabilities();
+    </script>
+</body>
+</html>
