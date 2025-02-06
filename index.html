@@ -13,7 +13,8 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #f4f4f4;
+            padding: 10px;
+            background-color: #FAE5C3;
         }
         .container {
             background: white;
@@ -37,6 +38,11 @@
             align-items: center;
             margin: 10px 0;
             gap: 10px;
+        }
+        .reshuffle-warning {
+            color: red;
+            font-weight: bold;
+            display: none;
         }
         .btn {
             padding: 5px 10px;
@@ -83,6 +89,7 @@
         <div class="total-counter">
             <span>Total Policies:</span>
             <span id="total">17</span>
+            <span id="reshuffle-warning" class="reshuffle-warning">Reshuffle policies!</span>
         </div>
         <div class="counter">
             <span>Liberal Policies:</span>
@@ -107,35 +114,12 @@
     </div>
 
     <script>
-        function factorial(n) {
-            return n <= 1 ? 1 : n * factorial(n - 1);
-        }
-        function combination(n, r) {
-            return factorial(n) / (factorial(r) * factorial(n - r));
-        }
-        function probability(liberal, fascist) {
-            let total = liberal + fascist;
-            let results = {};
-            for (let x = 0; x <= 3; x++) {
-                if (x <= liberal && (3 - x) <= fascist) {
-                    let ways = combination(liberal, x) * combination(fascist, 3 - x);
-                    let totalWays = combination(total, 3);
-                    results[x] = (ways / totalWays * 100).toFixed(2) + "%";
-                } else {
-                    results[x] = "0.00%";
-                }
-            }
-            return results;
-        }
         function updateProbabilities() {
             let liberal = parseInt(document.getElementById("liberal").innerText);
             let fascist = parseInt(document.getElementById("fascist").innerText);
             let total = liberal + fascist;
             document.getElementById("total").innerText = total;
-            let probs = probability(liberal, fascist);
-            for (let i = 0; i <= 3; i++) {
-                document.getElementById("prob-" + i).innerText = probs[i];
-            }
+            document.getElementById("reshuffle-warning").style.display = total < 3 ? "inline" : "none";
         }
         function changePolicy(type, change) {
             let liberal = parseInt(document.getElementById("liberal").innerText);
