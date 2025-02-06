@@ -59,6 +59,23 @@
         .results {
             margin-top: 20px;
         }
+        .policy-set {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            margin-top: 10px;
+            padding: 5px 0;
+            align-items: center;
+        }
+        .policy-set img {
+            width: 32%;
+            height: auto;
+        }
+        .probability {
+            width: 60px;
+            text-align: right;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -83,10 +100,10 @@
         <div class="results" id="results">
             <h3>Probabilities for drawing 3 policies:</h3>
             <p id="reshuffle-message" style="display: none; color: red;">Less than 3 policies - reshuffle the policies deck</p>
-            <p>0 Liberal: <span id="prob-0">0.00%</span></p>
-            <p>1 Liberal: <span id="prob-1">0.00%</span></p>
-            <p>2 Liberal: <span id="prob-2">0.00%</span></p>
-            <p>3 Liberal: <span id="prob-3">0.00%</span></p>
+            <div class="policy-set"><img src="fascist.jpeg"><img src="fascist.jpeg"><img src="fascist.jpeg"> <span class="probability" id="prob-0">0.00%</span></div>
+            <div class="policy-set"><img src="liberal.jpeg"><img src="fascist.jpeg"><img src="fascist.jpeg"> <span class="probability" id="prob-1">0.00%</span></div>
+            <div class="policy-set"><img src="liberal.jpeg"><img src="liberal.jpeg"><img src="fascist.jpeg"> <span class="probability" id="prob-2">0.00%</span></div>
+            <div class="policy-set"><img src="liberal.jpeg"><img src="liberal.jpeg"><img src="liberal.jpeg"> <span class="probability" id="prob-3">0.00%</span></div>
         </div>
     </div>
 
@@ -115,18 +132,10 @@
             let liberal = parseInt(document.getElementById("liberal").innerText);
             let fascist = parseInt(document.getElementById("fascist").innerText);
             let total = liberal + fascist;
-            let resultsDiv = document.getElementById("results");
-            let reshuffleMessage = document.getElementById("reshuffle-message");
-            if (total < 3) {
-                reshuffleMessage.style.display = "block";
-                resultsDiv.querySelectorAll("p:not(#reshuffle-message)").forEach(p => p.style.display = "none");
-            } else {
-                reshuffleMessage.style.display = "none";
-                resultsDiv.querySelectorAll("p:not(#reshuffle-message)").forEach(p => p.style.display = "block");
-                let probs = probability(liberal, fascist);
-                for (let i = 0; i <= 3; i++) {
-                    document.getElementById("prob-" + i).innerText = probs[i];
-                }
+            document.getElementById("total").innerText = total;
+            let probs = probability(liberal, fascist);
+            for (let i = 0; i <= 3; i++) {
+                document.getElementById("prob-" + i).innerText = probs[i];
             }
         }
         function changePolicy(type, change) {
@@ -137,7 +146,6 @@
             } else if (type === 'fascist' && fascist + change >= 0 && fascist + change <= 11) {
                 document.getElementById("fascist").innerText = fascist + change;
             }
-            document.getElementById("total").innerText = liberal + fascist;
             updateProbabilities();
         }
         updateProbabilities();
